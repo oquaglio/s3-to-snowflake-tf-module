@@ -17,3 +17,7 @@ output "aws_context" {
 output "snowflake_context" {
   value = var.snowflake_context
 }
+
+output aws_s3_bucket_id {
+    value = aws_s3_bucket.this.id
+}
