@@ -5,8 +5,6 @@ provider "aws" {
   region  = var.aws_context["region"]
 }
 
-provider "random" {}
-
 provider "snowflake" {
   username         = var.snowflake_context["username"]
   account          = var.snowflake_context["account"]
