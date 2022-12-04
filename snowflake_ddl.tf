@@ -13,7 +13,7 @@ resource "snowflake_database" "this" {
 
 resource "snowflake_schema" "this" {
   database = snowflake_database.this.name
-  name     = ${var.snowflake_context["schema"]}
+  name     = var.snowflake_context["schema"]
   comment  = "Schema for RAW movie data"
 
   is_transient        = false
