@@ -46,3 +46,19 @@ output "snowflake_load_trust_policy_template" {
 output "aws_iam_role" {
   value = aws_iam_role.this
 }
+
+# output "actor_pk" {
+#   value = try(lookup(var.sources[index(var.sources.*.name, "ACTOR")], "primary_key", "blah"))
+# }
+
+# output "sources_actor" {
+#   value = var.sources[index(var.sources.*.name, "ACTOR")]
+# }
+
+# output "actor_pk_map" {
+#   value = lookup(var.sources[index(var.sources.*.name, "ACTOR")], "primary_key", null) != null
+# }
+
+# output "does_actor_have_pk" {
+#   value = try(lookup(var.sources[index(var.sources.*.name, "ACTOR")], "primary_key", false)) != false
+# }

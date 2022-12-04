@@ -49,7 +49,7 @@ resource "snowflake_table_constraint" "primary_keys" {
   for_each = {
     for tbl in snowflake_table.this : tbl.name => tbl
     # skip table if no primary key defined
-    if try(lookup(var.sources[index(var.sources.*.name, tbl.name)], "primary_key", false)) != false
+    if try(lookup(var.sources[index(var.sources.*.name, tbl.name)], "primary_key", null)) != null
   }
 
   name     = "PRIMARY_KEY_CONSTRAINT"

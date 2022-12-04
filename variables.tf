@@ -48,10 +48,10 @@ variable "sources" {
     fields = list(object({
       name     = string
       type     = string
-      nullable = bool
+      nullable = optional(bool)
       source   = string
     }))
-    primary_key   = set(string)
+    primary_key   = optional(set(string))
     s3_key_prefix = string
   }))
 }
