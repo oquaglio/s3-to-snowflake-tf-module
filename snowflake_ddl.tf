@@ -6,14 +6,14 @@ resource "snowflake_warehouse" "this" {
 }
 
 resource "snowflake_database" "this" {
-  name                        = upper("${var.stack_context["environment"]}")
-  comment                     = upper("${var.stack_context["environment"]} database")
+  name                        = upper("${var.snowflake_context["database"]}")
+  comment                     = upper("${var.snowflake_context["database"]} database")
   data_retention_time_in_days = 3
 }
 
 resource "snowflake_schema" "this" {
   database = snowflake_database.this.name
-  name     = "RAW_MOVIE"
+  name     = ${var.snowflake_context["schema"]}
   comment  = "Schema for RAW movie data"
 
   is_transient        = false
@@ -24,7 +24,7 @@ resource "snowflake_schema" "this" {
 resource "snowflake_table" "this" {
   for_each = { for tbl in var.sources : tbl.name => tbl }
 
-  database            = snowflake_schema.this.database
+  database            = snowflake_database.this.name
   schema              = snowflake_schema.this.name
   data_retention_days = snowflake_schema.this.data_retention_days
   change_tracking     = false
@@ -61,7 +61,7 @@ resource "snowflake_table_constraint" "primary_keys" {
 
 resource "snowflake_tag" "tag" {
   name           = "cost_center"
-  database       = snowflake_schema.this.database
+  database       = snowflake_database.this.name
   schema         = snowflake_schema.this.name
   allowed_values = ["finance", "engineering"]
 }

@@ -21,7 +21,7 @@ resource "snowflake_storage_integration" "this" {
 
 resource "snowflake_file_format" "this" {
   name              = "JSON_FILE_FORMAT"
-  database          = snowflake_schema.this.database
+  database          = snowflake_database.this.name
   schema            = snowflake_schema.this.name
   format_type       = "JSON"
   binary_format     = "HEX"
@@ -32,10 +32,10 @@ resource "snowflake_file_format" "this" {
 resource "snowflake_stage" "this" {
   name                = replace(upper("${var.stack_context["stack_name"]}_${var.aws_context["region_code"]}_ext_stage"), "-", "_")
   url                 = "s3://${local.bucket_name}"
-  database            = snowflake_schema.this.database
+  database            = snowflake_database.this.name
   schema              = snowflake_schema.this.name
   storage_integration = snowflake_storage_integration.this.name
-  file_format         = "format_name = ${snowflake_schema.this.database}.${snowflake_schema.this.name}.${snowflake_file_format.this.name}"
+  file_format         = "format_name = ${snowflake_database.this.name}.${snowflake_schema.this.name}.${snowflake_file_format.this.name}"
 }
 
 # data "template_file" "snowflake_pipe_copy_stmt" {
@@ -58,7 +58,7 @@ resource "snowflake_pipe" "pipes" {
   #for_each = { for pipe in var.snowflake_pipes : pipe.name => pipe }
   for_each = { for src in var.sources : src.name => src }
 
-  database = snowflake_schema.this.database
+  database = snowflake_database.this.name
   schema   = snowflake_schema.this.name
   #name     = replace(upper("${var.stack_name}_${var.aws_region_code}_${local.pipes[index(local.pipes.*.table, each.value.name)].name}"), "-", "_")
   name    = replace(upper("${var.stack_context["stack_name"]}_${var.aws_context["region_code"]}_${each.value.name}_PIPE"), "-", "_")
@@ -68,7 +68,7 @@ resource "snowflake_pipe" "pipes" {
   #copy_statement = local.pipes[index(local.pipes.*.name, each.value.name)].copy_stmt
   #copy_statement = template_file.snowflake_pipe_copy_stmt.rendered
   copy_statement = templatefile("${path.module}/templates/copy.sql", {
-    snowflake_database    = snowflake_schema.this.database
+    snowflake_database    = snowflake_database.this.name
     snowflake_schema      = snowflake_schema.this.name
     table_name            = each.value.name
     field_list            = join(", ", each.value.fields.*.name)
