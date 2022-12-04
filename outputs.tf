@@ -47,6 +47,12 @@ output "aws_iam_role" {
   value = aws_iam_role.this
 }
 
+output "snowflake_storage_aws_iam_user_arn" {
+  value = snowflake_storage_integration.this.storage_aws_iam_user_arn
+}
+
+
+
 # output "actor_pk" {
 #   value = try(lookup(var.sources[index(var.sources.*.name, "ACTOR")], "primary_key", "blah"))
 # }
